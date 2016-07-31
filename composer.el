@@ -1,4 +1,4 @@
-;; composer.el --- Utillities for PHP composer -*- lexical-binding: t -*-
+;;; composer.el --- Utillities for PHP composer -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2015 USAMI Kenta
 
