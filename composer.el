@@ -89,12 +89,5 @@
   (when (yes-or-no-p "Do composer self-update? ")
     (composer-mode--composer-execute "self-update")))
 
-(define-derived-mode composer-mode json-mode "composer"
-  "Major mode editing `composer.json'."
-  )
-
-;;;###autoload
-(add-to-list 'auto-mode-alist '("/composer\\.json'" . composer-mode))
-
 (provide 'composer-mode)
 ;;; composer.el ends here
