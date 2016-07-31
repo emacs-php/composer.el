@@ -85,6 +85,17 @@
     (when is-dev (append "--dev"))
     (apply 'composer-mode--composer-execute "require" (nreverse args))))
 
+(defun composer-edit-composer-json ()
+  "Edit composer.json of the project."
+  (interactive)
+  (find-file (f-join (composer--find-composer-root default-directory) "composer.json")))
+
+(defun composer-open-composer-lock ()
+  "Open composer.lock of the project."
+  (interactive)
+  (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
+  (read-only-mode))
+
 (defun composer-self-update ()
   "Execute `composer.phar self-update' command."
   (interactive)
