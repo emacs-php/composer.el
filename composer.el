@@ -85,12 +85,12 @@
     (when is-dev (append "--dev"))
     (apply 'composer-mode--composer-execute "require" (nreverse args))))
 
-(defun composer-edit-composer-json ()
-  "Edit composer.json of the project."
+(defun composer-find-json-file ()
+  "Open composer.json of the project."
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.json")))
 
-(defun composer-open-composer-lock ()
+(defun composer-view-lock-file ()
   "Open composer.lock of the project."
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
