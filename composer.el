@@ -73,12 +73,14 @@
   (composer-mode--composer-execute "install"))
 
 (defun composer-require (is-dev &optional package)
-  "Execute `composer.phar require (--dev)' command."
+  "Execute `composer.phar require (--dev)' command.  Add --dev option if `IS-DEV' is t.  Require `PACKAGE' is package name."
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq is-dev (not (eq is-dev 1)))
     (setq package (read-string
                    (if is-dev "Input package name(dev): " "Input package name: "))))
+  (unless package
+    (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
     (when is-dev (append "--dev"))
     (apply 'composer-mode--composer-execute "require" (nreverse args))))
