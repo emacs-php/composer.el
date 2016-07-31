@@ -4,12 +4,13 @@
 
 ** Commands
 
-| command                   | description                                                                        |
-|---------------------------+------------------------------------------------------------------------------------|
-| =composer-install=        | Run =composer install= command                                                     |
-| =composer-self-update=    | Run =composer self-update= command                                                 |
-| =composer-require=        | Run =composer require= command (use =--dev= option if =C-u M-x composer-require= ) |
-| =composer-find-json-file= | Open =composer.json= of the project.                                               |
-| =composer-view-lock-file= | Open =composer.lock= of the project (as read-only).                                |
+| command                       | description                                         |
+|-------------------------------+-----------------------------------------------------|
+| =M-x composer-install=        | Run =composer install= command                      |
+| =M-x composer-self-update=    | Run =composer self-update= command                  |
+| =M-x composer-require=        | Run =composer require= command                      |
+| =C-u M-x composer-require=    | Run =composer require --dev= command                |
+| =M-x composer-find-json-file= | Open =composer.json= of the project.                |
+| =M-x composer-view-lock-file= | Open =composer.lock= of the project (as read-only). |
 
 wip...
