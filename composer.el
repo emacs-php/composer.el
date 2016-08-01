@@ -82,8 +82,8 @@
   (unless package
     (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
-    (when is-dev (append "--dev"))
-    (apply 'composer-mode--composer-execute "require" (nreverse args))))
+    (when is-dev (push "--dev" args))
+    (apply 'composer-mode--composer-execute "require" args)))
 
 (defun composer-find-json-file ()
   "Open composer.json of the project."
