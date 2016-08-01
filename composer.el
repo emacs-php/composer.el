@@ -67,11 +67,13 @@
 
 ;;(composer-mode--composer-execute "require" "--dev" "phpunit/phpunit:^4.8")
 
+;;;###autoload
 (defun composer-install ()
   "Execute `composer.phar install' command."
   (interactive)
   (composer-mode--composer-execute "install"))
 
+;;;###autoload
 (defun composer-require (is-dev &optional package)
   "Execute `composer.phar require (--dev)' command.  Add --dev option if `IS-DEV' is t.  Require `PACKAGE' is package name."
   (interactive "p")
@@ -85,17 +87,20 @@
     (when is-dev (push "--dev" args))
     (apply 'composer-mode--composer-execute "require" args)))
 
+;;;###autoload
 (defun composer-find-json-file ()
   "Open composer.json of the project."
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.json")))
 
+;;;###autoload
 (defun composer-view-lock-file ()
   "Open composer.lock of the project."
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
   (read-only-mode))
 
+;;;###autoload
 (defun composer-self-update ()
   "Execute `composer.phar self-update' command."
   (interactive)
