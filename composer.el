@@ -107,5 +107,5 @@
   (when (yes-or-no-p "Do composer self-update? ")
     (composer-mode--composer-execute "self-update")))
 
-(provide 'composer-mode)
+(provide 'composer)
 ;;; composer.el ends here
