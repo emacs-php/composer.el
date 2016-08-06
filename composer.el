@@ -54,6 +54,12 @@
           nil
         (composer--find-composer-root (f-dirname directory))))))
 
+(defun composer-mode--composer-execute-as-compile (&rest args)
+  "Execute `composer.phar' command on compile by ARGS."
+  (let ((default-directory (or (composer--find-composer-root default-directory)
+                               default-directory)))
+    (compile (s-join " " (cons (composer--find-executable) args)))))
+
 (defun composer-mode--composer-execute (&rest args)
   "Execute `composer.phar' command by ARGS."
   ;; You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
@@ -65,13 +71,14 @@
       (shell-command-to-string
        (mapconcat #'identity (cons (composer--find-executable) args) " "))))))
 
-;;(composer-mode--composer-execute "require" "--dev" "phpunit/phpunit:^4.8")
+;;(composer-mode--composer-execute-as-compile "require" "--dev" "phpunit/phpunit:^4.8")
+;;(composer-mode--composer-execute "update")
 
 ;;;###autoload
 (defun composer-install ()
   "Execute `composer.phar install' command."
   (interactive)
-  (composer-mode--composer-execute "install"))
+  (composer-mode--composer-execute-as-compile "install"))
 
 ;;;###autoload
 (defun composer-require (is-dev &optional package)
@@ -85,7 +92,7 @@
     (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
-    (apply 'composer-mode--composer-execute "require" args)))
+    (apply 'composer-mode--composer-execute-as-compile "require" args)))
 
 ;;;###autoload
 (defun composer-find-json-file ()
@@ -105,7 +112,7 @@
   "Execute `composer.phar self-update' command."
   (interactive)
   (when (yes-or-no-p "Do composer self-update? ")
-    (composer-mode--composer-execute "self-update")))
+    (composer-mode--composer-execute-as-compile "self-update")))
 
 (provide 'composer)
 ;;; composer.el ends here
