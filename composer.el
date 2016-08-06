@@ -33,6 +33,9 @@
 (defvar composer-executable-bin nil
   "Path to `composer.phar' exec file.")
 
+(defcustom composer-use-ansi-color nil
+  "Use ansi color code on execute `composer' command.")
+
 (defun composer--find-executable ()
   "Return `composer' command name."
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
@@ -54,13 +57,24 @@
           nil
         (composer--find-composer-root (f-dirname directory))))))
 
-(defun composer-mode--composer-execute-as-compile (&rest args)
+(defun composer--make-command-string (sub-command args)
+  "Return command string by `SUB-COMMAND' and `ARGS'."
+  (s-join " " (cons (composer--find-executable)
+                    (cons sub-command (composer--args-with-global-options args)))))
+
+(defun composer--args-with-global-options (args)
+  "Set global options to `ARGS'."
+  (unless composer-use-ansi-color
+    (setq args (push "--no-ansi" args)))
+  args)
+
+(defun composer-mode--composer-execute-as-compile (sub-command &rest args)
   "Execute `composer.phar' command on compile by ARGS."
   (let ((default-directory (or (composer--find-composer-root default-directory)
                                default-directory)))
-    (compile (s-join " " (cons (composer--find-executable) args)))))
+    (compile (composer--make-command-string sub-command args))))
 
-(defun composer-mode--composer-execute (&rest args)
+(defun composer-mode--composer-execute (sub-command &rest args)
   "Execute `composer.phar' command by ARGS."
   ;; You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
   (let ((default-directory (or (composer--find-composer-root default-directory)
@@ -68,10 +82,10 @@
     (replace-regexp-in-string
      "^.+getcomposer.org/xdebug\n" ""
      (s-chomp
-      (shell-command-to-string
-       (mapconcat #'identity (cons (composer--find-executable) args) " "))))))
+      (shell-command-to-string (composer--make-command-string sub-command args))))))
 
 ;;(composer-mode--composer-execute-as-compile "require" "--dev" "phpunit/phpunit:^4.8")
+;;(composer-mode--composer-execute-as-compile "update")
 ;;(composer-mode--composer-execute "update")
 
 ;;;###autoload
@@ -92,7 +106,7 @@
     (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
-    (apply 'composer-mode--composer-execute-as-compile "require" args)))
+    (composer-mode--composer-execute-as-compile "require" args)))
 
 ;;;###autoload
 (defun composer-find-json-file ()
