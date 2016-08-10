@@ -70,7 +70,7 @@
     (setq args (push "--no-ansi" args)))
   args)
 
-(defun composer-mode--composer-async-execute (sub-command &rest args)
+(defun composer--command-async-execute (sub-command &rest args)
   "Asynchronous execute `composer.phar' command SUB-COMMAND by ARGS."
   (let ((default-directory (or (composer--find-composer-root default-directory)
                                default-directory)))
@@ -78,7 +78,7 @@
         (compile (composer--make-command-string sub-command args))
       (async-shell-command (composer--make-command-string sub-command args)))))
 
-(defun composer-mode--composer-execute (sub-command &rest args)
+(defun composer--command-execute (sub-command &rest args)
   "Execute `composer.phar' command SUB-COMMAND by ARGS."
   ;; You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
   (let ((default-directory (or (composer--find-composer-root default-directory)
@@ -88,16 +88,17 @@
      (s-chomp
       (shell-command-to-string (composer--make-command-string sub-command args))))))
 
-;; (composer-mode--composer-async-execute "require" "--dev" "phpunit/phpunit:^4.8")
-;; (composer-mode--composer-async-execute "update")
-;; (let ((composer--async-use-compilation nil)) (composer-mode--composer-execute "update"))
-;; (composer-mode--composer-execute "update")
+
+;; (composer--command-async-execute "require" "--dev" "phpunit/phpunit:^4.8")
+;; (composer--command-async-execute "update")
+;; (let ((composer--async-use-compilation nil)) (composer--command-execute "update"))
+;; (composer--command-execute "update")
 
 ;;;###autoload
 (defun composer-install ()
   "Execute `composer.phar install' command."
   (interactive)
-  (composer-mode--composer-async-execute "install"))
+  (composer--command-async-execute "install"))
 
 ;;;###autoload
 (defun composer-require (is-dev &optional package)
@@ -111,7 +112,7 @@
     (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
-    (composer-mode--composer-async-execute "require" args)))
+    (composer--command-async-execute "require" args)))
 
 ;;;###autoload
 (defun composer-find-json-file ()
@@ -131,7 +132,7 @@
   "Execute `composer.phar self-update' command."
   (interactive)
   (when (yes-or-no-p "Do composer self-update? ")
-    (composer-mode--composer-async-execute "self-update")))
+    (composer--command-async-execute "self-update")))
 
 (provide 'composer)
 ;;; composer.el ends here
