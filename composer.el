@@ -112,7 +112,7 @@
     (error "A argument `PACKAGE' is required"))
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
-    (composer--command-async-execute "require" args)))
+    (apply 'composer--command-async-execute "require" args)))
 
 ;;;###autoload
 (defun composer-find-json-file ()
