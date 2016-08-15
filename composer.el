@@ -70,6 +70,34 @@
     (setq args (push "--no-ansi" args)))
   args)
 
+(defun composer--parse-json ()
+  "Parse `composer.json'."
+  (json-read-file (f-join (composer--find-composer-root default-directory) "composer.json")))
+
+(defun composer--get-vendor-bin-dir ()
+  "Return path to project bin dir."
+  (let ((config (composer--parse-json)))
+    (cdr-safe (assq 'bin-dir (cdr-safe (assq 'config config))))))
+
+(defun composer--get-vendor-bin-files ()
+  "Return executable file names of `vendor/bin' dir."
+  (let* ((default-directory (or (composer--find-composer-root default-directory)
+                                default-directory))
+         (bin-dir (composer--get-vendor-bin-dir)))
+    (if (null bin-dir)
+        nil
+      (directory-files (f-join default-directory bin-dir) nil "\\`[^.]"))))
+
+(defun composer--get-vendor-bin-path (command)
+  "Return executable file path by `COMMAND'."
+  (let* ((default-directory (or (composer--find-composer-root default-directory)
+                                default-directory))
+         (bin-dir (composer--get-vendor-bin-dir))
+         (command-path (if command (f-join bin-dir command) nil)))
+    (if (not (and command-path (file-executable-p command-path)))
+        nil
+      command-path)))
+
 (defun composer--command-async-execute (sub-command &rest args)
   "Asynchronous execute `composer.phar' command SUB-COMMAND by ARGS."
   (let ((default-directory (or (composer--find-composer-root default-directory)
@@ -126,6 +154,17 @@
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
   (read-only-mode))
+
+;;;###autoload
+(defun composer-run-vendor-bin-command (command)
+  "Run command `COMMAND' in `vendor/bin' of the composer project."
+  (interactive (list (completing-read "Run command in vendor/bin: " (composer--get-vendor-bin-files))))
+  (let ((default-directory (or (composer--find-composer-root default-directory)
+                               default-directory))
+        (command-path (composer--get-vendor-bin-path command)))
+    (if command-path
+        (compile command-path)
+      (error "`%s' is not executable file" command))))
 
 ;;;###autoload
 (defun composer-self-update ()
