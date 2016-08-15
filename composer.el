@@ -43,7 +43,7 @@
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
       composer-executable-bin
     (catch 'found
-      (dolist (cmd '("composer.phar" "composer"))
+      (dolist (cmd '("composer" "composer.phar"))
         (when (executable-find cmd)
           (throw 'found cmd)))
       ;; ToDo: Returns project local binary file
