@@ -116,11 +116,16 @@
      (s-chomp
       (shell-command-to-string (composer--make-command-string sub-command args))))))
 
+(defun composer-get-config (name)
+  "Return config value by `NAME'."
+  (let ((output (s-lines (composer--command-execute "config" name))))
+    (if (eq 1 (length output)) (car output) nil)))
 
 ;; (composer--command-async-execute "require" "--dev" "phpunit/phpunit:^4.8")
 ;; (composer--command-async-execute "update")
 ;; (let ((composer--async-use-compilation nil)) (composer--command-execute "update"))
 ;; (composer--command-execute "update")
+;; (composer-get-config "bin-dir")
 
 ;;;###autoload
 (defun composer-install ()
