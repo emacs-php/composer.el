@@ -35,6 +35,9 @@
 
 (defvar composer--async-use-compilation t)
 
+(defvar composer-global-command nil
+  "Execute composer global command when `composer-global-command' is t.")
+
 (defcustom composer-use-ansi-color nil
   "Use ansi color code on execute `composer' command.")
 
@@ -62,7 +65,8 @@
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
   (s-join " " (cons (composer--find-executable)
-                    (cons sub-command (composer--args-with-global-options args)))))
+                    (append (if composer-global-command '("global") nil)
+                            (cons sub-command (composer--args-with-global-options args))))))
 
 (defun composer--args-with-global-options (args)
   "Set global options to `ARGS'."
@@ -126,6 +130,7 @@
 ;; (let ((composer--async-use-compilation nil)) (composer--command-execute "update"))
 ;; (composer--command-execute "update")
 ;; (composer-get-config "bin-dir")
+;; (let ((composer-global-command t)) (composer-get-config "bin-dir"))
 
 ;;;###autoload
 (defun composer-install ()
