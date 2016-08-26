@@ -96,7 +96,9 @@
 (defun composer--get-vendor-bin-dir ()
   "Return path to project bin dir."
   (let ((config (composer--parse-json)))
-    (cdr-safe (assq 'bin-dir (cdr-safe (assq 'config config))))))
+    (or
+     (cdr-safe (assq 'bin-dir (cdr-safe (assq 'config config))))
+     "vendor/bin")))
 
 (defun composer--get-vendor-bin-files ()
   "Return executable file names of `vendor/bin' dir."
@@ -112,9 +114,9 @@
   (let* ((default-directory (or (composer--find-composer-root default-directory)
                                 default-directory))
          (bin-dir (composer--get-vendor-bin-dir))
-         (command-path (if command (f-join bin-dir command) nil)))
+         (command-path (if (and bin-dir command) (f-join bin-dir command) nil)))
     (if (not (and command-path (file-executable-p command-path)))
-        nil
+        (error "%s command is not exists" command)
       command-path)))
 
 (defun composer--command-async-execute (sub-command &rest args)
