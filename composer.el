@@ -4,7 +4,7 @@
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2015
-;; Version: 0.0.3
+;; Version: 0.0.5
 ;; Keywords: php dependency manager
 ;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0"))
 
