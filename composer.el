@@ -64,9 +64,10 @@
 
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
-  (s-join " " (cons (composer--find-executable)
-                    (append (if composer-global-command '("global") nil)
-                            (cons sub-command (composer--args-with-global-options args))))))
+  (s-join " " (mapcar 'shell-quote-argument
+                      (cons (composer--find-executable)
+                            (append (if composer-global-command '("global") nil)
+                                    (cons sub-command (composer--args-with-global-options args)))))))
 
 (defun composer--args-with-global-options (args)
   "Set global options to `ARGS'."
