@@ -30,6 +30,7 @@
 ;; ## Commands
 ;;
 ;;  - M-x composer  - Run composer sub command (with completing read)
+;;  - C-u M-x composer  - Run composer (global) sub command (with completing read)
 ;;  - M-x composer-install  - Run composer install command
 ;;  - M-x composer-require  - Run composer require command
 ;;  - C-u M-x composer-require  - Run composer require --dev command
@@ -207,10 +208,16 @@
 (make-obsolete 'composer-self-update 'composer)
 
 ;;;###autoload
-(defun composer (sub-command)
-  "Execute `composer.phar' SUB-COMMAND."
-  (interactive (list (completing-read "Run composer: " (composer--list-sub-commands))))
+(defun composer (global &optional sub-command)
+  "Execute `composer.phar'.  Execute `global' sub command If GLOBAL is t.  Require SUB-COMMAND is composer sub command."
+  (interactive "p")
+  (when (called-interactively-p 'interactive)
+    (setq global (not (eq global 1)))
+    (setq sub-command (completing-read
+                       (if global "Input sub-command (global): " "Input sub-command: ")
+                       (composer--list-sub-commands))))
   (let ((composer--quote-shell-argument nil)
+        (composer-global-command global)
         (commands (s-split " " sub-command)))
     (apply 'composer--command-async-execute (car commands) (cdr commands))))
 
