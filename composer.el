@@ -164,7 +164,7 @@
   "Open composer.lock of the project."
   (interactive)
   (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
-  (read-only-mode))
+  (view-mode))
 
 ;;;###autoload
 (defun composer-run-vendor-bin-command (command)
