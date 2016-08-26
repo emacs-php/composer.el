@@ -208,18 +208,20 @@
 (make-obsolete 'composer-self-update 'composer)
 
 ;;;###autoload
-(defun composer (global &optional sub-command)
-  "Execute `composer.phar'.  Execute `global' sub command If GLOBAL is t.  Require SUB-COMMAND is composer sub command."
+(defun composer (global &optional sub-command option)
+  "Execute `composer.phar'.  Execute `global' sub command If GLOBAL is t.  Require SUB-COMMAND is composer sub command.  OPTION is optional commandline arguments."
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq global (not (eq global 1)))
     (setq sub-command (completing-read
-                       (if global "Input sub-command (global): " "Input sub-command: ")
-                       (composer--list-sub-commands))))
+                       (if global "Composer (global) sub command: " "Composer sub command: ")
+                       (composer--list-sub-commands)))
+    (setq option (read-string (format "Input `composer %s' argument: " sub-command))))
+  (unless sub-command
+    (error "A argument `SUB-COMMAND' is required"))
   (let ((composer--quote-shell-argument nil)
-        (composer-global-command global)
-        (commands (s-split " " sub-command)))
-    (apply 'composer--command-async-execute (car commands) (cdr commands))))
+        (composer-global-command global))
+    (apply 'composer--command-async-execute sub-command (list option))))
 
 (provide 'composer)
 ;;; composer.el ends here
