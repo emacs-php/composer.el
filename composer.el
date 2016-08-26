@@ -129,6 +129,7 @@
     (mapcar (lambda (line) (car (s-split-words line)))
             (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
+;;;###autoload
 (defun composer-get-config (name)
   "Return config value by `NAME'."
   (let ((output (s-lines (composer--command-execute "config" name))))

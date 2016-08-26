@@ -6,6 +6,7 @@
 
 | command                       | description                                         |
 |-------------------------------+-----------------------------------------------------|
+| =M-x composer=                | Run =composer= sub command (with completing read)   |
 | =M-x composer-install=        | Run =composer install= command                      |
 | =M-x composer-self-update=    | Run =composer self-update= command                  |
 | =M-x composer-require=        | Run =composer require= command                      |
@@ -13,4 +14,9 @@
 | =M-x composer-find-json-file= | Open =composer.json= of the project.                |
 | =M-x composer-view-lock-file= | Open =composer.lock= of the project (as read-only). |
 
-wip...
+** API
+*** =composer-get-config(name)=
+
+#+BEGIN_SRC emacs-lisp
+(composer-get-config "bin-dir") ;=> "vendor/bin"
+#+END_SRC
