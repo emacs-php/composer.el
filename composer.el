@@ -35,6 +35,8 @@
 
 (defvar composer--async-use-compilation t)
 
+(defvar composer--quote-shell-argument t)
+
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
@@ -64,7 +66,7 @@
 
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
-  (s-join " " (mapcar 'shell-quote-argument
+  (s-join " " (mapcar (if composer--quote-shell-argument 'shell-quote-argument 'identity)
                       (cons (composer--find-executable)
                             (append (if composer-global-command '("global") nil)
                                     (cons sub-command (composer--args-with-global-options args)))))))
@@ -120,6 +122,12 @@
      "^.+getcomposer.org/xdebug\n" ""
      (s-chomp
       (shell-command-to-string (composer--make-command-string sub-command args))))))
+
+(defun composer--list-sub-commands ()
+  "List `composer' sub commands."
+  (let ((output (composer--command-execute "list")))
+    (mapcar (lambda (line) (car (s-split-words line)))
+            (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
 (defun composer-get-config (name)
   "Return config value by `NAME'."
@@ -183,6 +191,14 @@
   (interactive)
   (when (yes-or-no-p "Do composer self-update? ")
     (composer--command-async-execute "self-update")))
+
+;;;###autoload
+(defun composer (sub-command)
+  "Execute `composer.phar' SUB-COMMAND."
+  (interactive (list (completing-read "Run composer: " (composer--list-sub-commands))))
+  (let ((composer--quote-shell-argument nil)
+        (commands (s-split " " sub-command)))
+    (apply 'composer--command-async-execute (car commands) (cdr commands))))
 
 (provide 'composer)
 ;;; composer.el ends here
