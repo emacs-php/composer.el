@@ -193,6 +193,8 @@
   (when (yes-or-no-p "Do composer self-update? ")
     (composer--command-async-execute "self-update")))
 
+(make-obsolete 'composer-self-update 'composer)
+
 ;;;###autoload
 (defun composer (sub-command)
   "Execute `composer.phar' SUB-COMMAND."
