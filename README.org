@@ -8,7 +8,6 @@
 |-------------------------------+-----------------------------------------------------|
 | =M-x composer=                | Run =composer= sub command (with completing read)   |
 | =M-x composer-install=        | Run =composer install= command                      |
-| =M-x composer-self-update=    | Run =composer self-update= command                  |
 | =M-x composer-require=        | Run =composer require= command                      |
 | =C-u M-x composer-require=    | Run =composer require --dev= command                |
 | =M-x composer-find-json-file= | Open =composer.json= of the project.                |
