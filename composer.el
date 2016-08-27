@@ -47,13 +47,27 @@
 
 (defvar composer--async-use-compilation t)
 
+(defvar composer--execute-interactive nil)
+
 (defvar composer--quote-shell-argument t)
 
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
+(defgroup composer nil
+  "PHP Composer interface"
+  :group (if (featurep 'php-mode) 'php 'tools)
+  :tag "PHP Composer"
+  :prefix "composer-")
+
 (defcustom composer-use-ansi-color nil
-  "Use ansi color code on execute `composer' command.")
+  "Use ansi color code on execute `composer' command."
+  :type 'boolean)
+
+(defcustom composer-interactive-sub-commands
+  '("remove" "search")
+  "List of sub commands of interactive execution."
+  :type '(repeat string))
 
 (defun composer--find-executable ()
   "Return `composer' command name."
@@ -78,10 +92,14 @@
 
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
-  (s-join " " (mapcar (if composer--quote-shell-argument 'shell-quote-argument 'identity)
-                      (cons (composer--find-executable)
-                            (append (if composer-global-command '("global") nil)
-                                    (cons sub-command (composer--args-with-global-options args)))))))
+  (s-join " "
+          (mapcar
+           (if composer--quote-shell-argument 'shell-quote-argument 'identity)
+           (cons (composer--find-executable)
+                 (append (if composer-global-command '("global") nil)
+                         (list sub-command)
+                         (if composer--execute-interactive nil '("--no-interaction"))
+                         (composer--args-with-global-options args))))))
 
 (defun composer--args-with-global-options (args)
   "Set global options to `ARGS'."
@@ -132,10 +150,12 @@
   ;; You are running composer with xdebug enabled. This has a major impact on runtime performance. See https://getcomposer.org/xdebug
   (let ((default-directory (or (composer--find-composer-root default-directory)
                                default-directory)))
-    (replace-regexp-in-string
-     "^.+getcomposer.org/xdebug\n" ""
-     (s-chomp
-      (shell-command-to-string (composer--make-command-string sub-command args))))))
+    (if composer--execute-interactive
+        (compile (composer--make-command-string sub-command args) t)
+      (replace-regexp-in-string
+       "^.+getcomposer.org/xdebug\n" ""
+       (s-chomp
+        (shell-command-to-string (composer--make-command-string sub-command args)))))))
 
 (defun composer--list-sub-commands ()
   "List `composer' sub commands."
@@ -155,6 +175,7 @@
 ;; (composer--command-execute "update")
 ;; (composer-get-config "bin-dir")
 ;; (let ((composer-global-command t)) (composer-get-config "bin-dir"))
+;; (composer--make-command-string "hoge" '("fuga"))
 
 ;;;###autoload
 (defun composer-install ()
@@ -222,8 +243,10 @@
   (unless sub-command
     (error "A argument `SUB-COMMAND' is required"))
   (let ((composer--quote-shell-argument nil)
-        (composer-global-command global))
-    (apply 'composer--command-async-execute sub-command (list option))))
+        (composer-global-command global)
+        (composer--execute-interactive (member sub-command composer-interactive-sub-commands)))
+    (apply (if composer--execute-interactive 'composer--command-execute 'composer--command-async-execute)
+           sub-command (list option))))
 
 (provide 'composer)
 ;;; composer.el ends here
