@@ -55,8 +55,8 @@
   "Execute composer global command when `composer-global-command' is t.")
 
 (defgroup composer nil
-  "PHP Composer interface"
-  :group (if (featurep 'php-mode) 'php 'tools)
+  "Interface to PHP Composer."
+  :group 'external
   :tag "PHP Composer"
   :prefix "composer-")
 
