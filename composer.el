@@ -1,10 +1,10 @@
-;;; composer.el --- Utillities for PHP composer -*- lexical-binding: t -*-
+;;; composer.el --- Interface to PHP Composer -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2015 USAMI Kenta
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2015
-;; Version: 0.0.5
+;; Version: 0.0.6
 ;; Keywords: php dependency manager
 ;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0"))
 
