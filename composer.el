@@ -39,6 +39,7 @@
 ;;  - M-x composer-view-lock-file  - Open composer.lock of the project (as read-only)
 
 ;;; Code:
+(require 'compile)
 (require 's)
 (require 'f)
 (require 'request)
