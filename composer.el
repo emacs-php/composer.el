@@ -143,7 +143,7 @@
                                default-directory)))
     (if composer--async-use-compilation
         (compile (composer--make-command-string sub-command args))
-      (async-shell-command (composer--make-command-string sub-command args)))))
+      (async-shell-command (composer--make-command-string sub-command args) nil nil))))
 
 (defun composer--command-execute (sub-command &rest args)
   "Execute `composer.phar' command SUB-COMMAND by ARGS."
@@ -182,6 +182,13 @@
   "Execute `composer.phar install' command."
   (interactive)
   (composer--command-async-execute "install"))
+
+;;;###autoload
+(defun composer-dump-autoload ()
+  "Execute `composer.phar install' command."
+  (interactive)
+  (let ((composer--async-use-compilation nil))
+    (composer--command-async-execute "dump-autoload")))
 
 ;;;###autoload
 (defun composer-require (is-dev &optional package)
