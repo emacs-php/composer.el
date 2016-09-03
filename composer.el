@@ -59,7 +59,8 @@
 (defgroup composer nil
   "Interface to PHP Composer."
   :group 'external
-  :tag "PHP Composer"
+  :group (if (featurep 'php-mode) 'php nil)
+  :tag "Composer"
   :prefix "composer-")
 
 (defcustom composer-use-ansi-color nil
