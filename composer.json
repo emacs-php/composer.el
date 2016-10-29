@@ -1,4 +1,5 @@
 {
-    "name": "zonuexe/composer.el",
+    "name": "zonuexe/composer-el",
+    "description": "Composer interface for Emacs.",
     "license": "GPL-3.0"
 }
