@@ -68,7 +68,7 @@
   :type 'boolean)
 
 (defcustom composer-interactive-sub-commands
-  '("remove" "search")
+  '("init" "remove" "search")
   "List of sub commands of interactive execution."
   :type '(repeat string))
 
