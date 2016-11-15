@@ -118,13 +118,14 @@
     (setq args (push "--no-ansi" args)))
   args)
 
-(defun composer--parse-json ()
-  "Parse `composer.json'."
-  (json-read-file (f-join (composer--find-composer-root default-directory) "composer.json")))
+(defun composer--parse-json (dir)
+  "Parse `composer.json' in `DIR'."
+  (json-read-file (f-join dir "composer.json")))
 
 (defun composer--get-vendor-bin-dir ()
   "Return path to project bin dir."
-  (let ((config (composer--parse-json)))
+  (let* ((dir (composer--find-composer-root default-directory))
+         (config (if dir (composer--parse-json dir) nil)))
     (or
      (cdr-safe (assq 'bin-dir (cdr-safe (assq 'config config))))
      "vendor/bin")))
