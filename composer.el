@@ -193,7 +193,8 @@
 ;;;###autoload
 (defun composer-get-config (name)
   "Return config value by `NAME'."
-  (let ((output (s-lines (composer--command-execute "config" name))))
+  (let* ((default-directory (if composer-global-command (composer--get-global-dir) default-directory))
+         (output (s-lines (composer--command-execute "config" name))))
     (if (eq 1 (length output)) (car output) nil)))
 
 ;; (composer--command-async-execute "require" "--dev" "phpunit/phpunit:^4.8")
