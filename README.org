@@ -21,3 +21,12 @@
 #+BEGIN_SRC emacs-lisp
 (composer-get-config "bin-dir") ;=> "vendor/bin"
 #+END_SRC
+
+*** =composer-get-bin-dir()=
+
+#+BEGIN_SRC emacs-lisp
+(composer-get-bin-dir) ;=> "/path/to/current-project/vendor/bin"
+
+(let ((composer-global-command t))
+  (composer-get-bin-dir)) ;=> "/home/your-name/.composer/vendor/bin"
+#+END_SRC

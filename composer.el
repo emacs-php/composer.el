@@ -205,6 +205,16 @@
 ;; (let ((composer-global-command t)) (composer-get-config "bin-dir"))
 ;; (composer--make-command-string "hoge" '("fuga"))
 
+;;;###autoload
+(defun composer-get-bin-dir ()
+  "Retrurn path to Composer bin directory."
+  (if composer-global-command
+      (or (getenv "COMPOSER_BIN_DIR")
+          (f-join (composer--get-global-bin-dir) "vendor/bin"))
+    (let ((path (composer--find-composer-root default-directory)))
+      (if path
+        (f-join path (composer-get-config "bin-dir"))))))
+
 
 ;;; Command
 
