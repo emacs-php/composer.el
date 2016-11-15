@@ -3,7 +3,7 @@
 
 (package-file "composer.el")
 
-(development
- (depends-on "f")
- (depends-on "s")
- (depends-on "request"))
+(depends-on "f")
+(depends-on "s")
+(depends-on "request")
+(depends-on "seq")

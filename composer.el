@@ -6,7 +6,7 @@
 ;; Created: 5 Dec 2015
 ;; Version: 0.0.6
 ;; Keywords: php dependency manager
-;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0"))
+;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0") (seq "1.9"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -40,6 +40,7 @@
 
 ;;; Code:
 (require 'compile)
+(require 'seq)
 (require 's)
 (require 'f)
 (require 'request)
