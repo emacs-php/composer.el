@@ -1,6 +1,14 @@
 * composer.el
 
+#+BEGIN_HTML
+<a href="http://melpa.org/#/composer"><img alt="MELPA: composer" src="http://melpa.org/packages/composer-badge.svg"></a>
+<a href="http://stable.melpa.org/#/composer"><img alt="MELPA stable: composer" src="http://stable.melpa.org/packages/composer-badge.svg"></a>
+#+END_HTML
+
 [[https://getcomposer.org/][Composer]] interface for Emacs.
+
+** Specification
+See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= supports [[https://getcomposer.org/doc/03-cli.md#environment-variables][Environment variables]] (currently we support only =COMPOSER_BIN_DIR= and =COMPOSER_HOME=).
 
 ** Commands
 
