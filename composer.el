@@ -175,6 +175,18 @@
     (mapcar (lambda (line) (car (s-split-words line)))
             (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
+(defun composer--get-global-dir ()
+  "Return path to global composer directory."
+  (seq-find
+   'file-exists-p
+   (seq-remove
+    'null
+    (list
+     (getenv "COMPOSER_HOME")
+     (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
+     (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
+     (when (getenv "HOME")) (f-join (getenv "HOME") ".composer")))))
+
 
 ;;; API
 
