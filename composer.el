@@ -64,6 +64,7 @@
 (defgroup composer nil
   "Interface to PHP Composer."
   :group 'external
+  :group 'tools
   :group (if (featurep 'php-mode) 'php nil)
   :tag "Composer"
   :prefix "composer-")
