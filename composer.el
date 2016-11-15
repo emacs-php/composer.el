@@ -44,6 +44,8 @@
 (require 'f)
 (require 'request)
 
+
+;;; Variables
 (defvar composer-executable-bin nil
   "Path to `composer.phar' exec file.")
 
@@ -56,6 +58,8 @@
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
+
+;;; Customize
 (defgroup composer nil
   "Interface to PHP Composer."
   :group 'external
@@ -72,6 +76,8 @@
   "List of sub commands of interactive execution."
   :type '(repeat string))
 
+
+;;; Utility
 (defun composer--find-executable ()
   "Return `composer' command name."
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
@@ -166,6 +172,9 @@
     (mapcar (lambda (line) (car (s-split-words line)))
             (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
+
+;;; API
+
 ;;;###autoload
 (defun composer-get-config (name)
   "Return config value by `NAME'."
@@ -179,6 +188,9 @@
 ;; (composer-get-config "bin-dir")
 ;; (let ((composer-global-command t)) (composer-get-config "bin-dir"))
 ;; (composer--make-command-string "hoge" '("fuga"))
+
+
+;;; Command
 
 ;;;###autoload
 (defun composer-install ()
