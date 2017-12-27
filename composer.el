@@ -7,7 +7,7 @@
 ;; Version: 0.0.8
 ;; Keywords: tools php dependency manager
 ;; Homepage: https://github.com/zonuexe/composer.el
-;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0") (seq "1.9"))
+;; Package-Requires: ((emacs "24") (s "1.9.0") (f "0.17") (request "0.2.0") (seq "1.9") (php-runtime "0"))
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -40,6 +40,7 @@
 ;;  - M-x composer-view-lock-file  - Open composer.lock of the project (as read-only)
 
 ;;; Code:
+(require 'php-runtime)
 (require 'compile)
 (require 'seq)
 (require 's)
