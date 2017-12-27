@@ -277,7 +277,7 @@
   (when (yes-or-no-p "Do composer self-update? ")
     (composer--command-async-execute "self-update")))
 
-(make-obsolete 'composer-self-update 'composer)
+(make-obsolete 'composer-self-update 'composer "0.0.5")
 
 ;;;###autoload
 (defun composer (global &optional sub-command option)
