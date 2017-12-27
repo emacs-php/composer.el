@@ -61,6 +61,8 @@
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
+(defconst composer-installer-url "https://getcomposer.org/installer")
+
 
 ;;; Customize
 (defgroup composer nil
@@ -188,6 +190,23 @@
      (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
      (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
      (when (getenv "HOME")) (f-join (getenv "HOME") ".composer")))))
+
+(defun composer--download-composer-phar (path-to-dest)
+  "Download composer.phar and copy to `PATH-TO-DEST'.
+
+https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
+  (let ((path-to-temp (f-join temporary-file-directory "composer-setup.php"))
+        (expected-signature
+         (s-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
+        actual-signature)
+    (php-runtime-eval (format "copy('%s', '%s');" composer-installer-url path-to-temp))
+    (setq actual-signature (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path-to-temp))))
+    (unless (string= expected-signature actual-signature)
+      (php-runtime-expr (format "unlink('%s')" path-to-temp))
+      (error "Invalid installer signature"))
+    (let ((default-directory (f-dirname path-to-temp)))
+      (shell-command (format "php %s" (shell-quote-argument path-to-temp))))
+    (f-move path-to-temp path-to-dest)))
 
 
 ;;; API
