@@ -1,6 +1,6 @@
 ;;; composer.el --- Interface to PHP Composer -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015 USAMI Kenta
+;; Copyright (C) 2018 Friends of Emacs-PHP development
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2015
