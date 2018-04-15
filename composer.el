@@ -107,14 +107,14 @@
 
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
-  (s-join " "
-          (mapcar
-           (if composer--quote-shell-argument 'shell-quote-argument 'identity)
-           (cons (composer--find-executable)
-                 (append (if composer-global-command '("global") nil)
-                         (list sub-command)
-                         (if composer--execute-interactive nil '("--no-interaction"))
-                         (composer--args-with-global-options args))))))
+  (mapconcat
+   (if composer--quote-shell-argument 'shell-quote-argument 'identity)
+   (cons (composer--find-executable)
+         (append (if composer-global-command '("global") nil)
+                 (list sub-command)
+                 (if composer--execute-interactive nil '("--no-interaction"))
+                 (composer--args-with-global-options args)))
+   " "))
 
 (defun composer--args-with-global-options (args)
   "Set global options to `ARGS'."
