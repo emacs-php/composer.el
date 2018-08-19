@@ -12,16 +12,19 @@ See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= sup
 
 ** Commands
 
-| command                       | description                                                |
-|-------------------------------+------------------------------------------------------------|
-| =M-x composer=                | Run =composer= sub command (with completing read)          |
-| =C-u M-x composer=            | Run =composer= (global) sub command (with completing read) |
-| =M-x composer-install=        | Run =composer install= command                             |
-| =M-x composer-require=        | Run =composer require= command                             |
-| =C-u M-x composer-require=    | Run =composer require --dev= command                       |
-| =M-x composer-dump-autoload=  | Run =composer dump-autoload= command                       |
-| =M-x composer-find-json-file= | Open =composer.json= of the project                        |
-| =M-x composer-view-lock-file= | Open =composer.lock= of the project (as read-only)         |
+| command                               | description                                                |
+|---------------------------------------+------------------------------------------------------------|
+| =M-x composer=                        | Run =composer= sub command (with completing read)          |
+| =C-u M-x composer=                    | Run =composer= (global) sub command (with completing read) |
+| =M-x composer-install=                | Run =composer install= command                             |
+| =M-x composer-require=                | Run =composer require= command                             |
+| =C-u M-x composer-require=            | Run =composer require --dev= command                       |
+| =M-x composer-update=                 | Run =composer update= command                              |
+| =M-x composer-dump-autoload=          | Run =composer dump-autoload= command                       |
+| =M-x composer-run-script=             | Run =command= in =vendor/bin=                              |
+| =M-x composer-run-vendor-bin-command= | Run =composer run-script= command                          |
+| =M-x composer-find-json-file=         | Open =composer.json= of the project                        |
+| =M-x composer-view-lock-file=         | Open =composer.lock= of the project (as read-only)         |
 
 ** API
 *** =composer-get-config(name)=
