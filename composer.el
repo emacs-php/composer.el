@@ -34,6 +34,7 @@
 ;;  - C-u M-x composer  - Run composer (global) sub command (with completing read)
 ;;  - M-x composer-install  - Run composer install command
 ;;  - M-x composer-require  - Run composer require command
+;;  - M-x composer-update  - Run composer update command
 ;;  - C-u M-x composer-require  - Run composer require --dev command
 ;;  - M-x composer-dump-autoload - Run composer dump-autoload command
 ;;  - M-x composer-find-json-file  - Open composer.json of the project
@@ -267,6 +268,12 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
     (apply 'composer--command-async-execute "require" args)))
+
+;;;###autoload
+(defun composer-update ()
+  "Execute `composer.phar update' command."
+  (interactive)
+  (composer--command-async-execute "update"))
 
 ;;;###autoload
 (defun composer-find-json-file ()
