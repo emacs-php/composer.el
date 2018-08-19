@@ -154,6 +154,13 @@
         (error "%s command is not exists" command)
       command-path)))
 
+(defun composer--get-scripts ()
+  "Return script names in composer.json, excluding pre and post hooks."
+  (let ((output (composer--command-execute "run" "-l")))
+    (seq-filter (lambda (script) (not (member script '("pre" "post"))))
+                (mapcar (lambda (line) (car (s-split-words line)))
+                        (s-split "\n" (cadr (s-split "Scripts:\n" output)))))))
+
 (defun composer--command-async-execute (sub-command &rest args)
   "Asynchronous execute `composer.phar' command SUB-COMMAND by ARGS."
   (let ((default-directory (or (composer--find-composer-root default-directory)
@@ -298,6 +305,12 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
     (if command-path
         (compile command-path)
       (error "`%s' is not executable file" command))))
+
+;;;###autoload
+(defun composer-run-script (script)
+  "Run script `SCRIPT` as defined in the composer.json."
+  (interactive (list (completing-read "Run scripts: " (composer--get-scripts))))
+  (composer--command-async-execute "run-script" script))
 
 ;;;###autoload
 (defun composer-self-update ()
