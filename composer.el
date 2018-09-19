@@ -87,15 +87,15 @@
 
 ;;; Utility
 (defun composer--find-executable ()
-  "Return `composer' command name."
+  "Return list of `composer' command and executable file."
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
-      composer-executable-bin
-    (catch 'found
-      (dolist (cmd '("composer" "composer.phar"))
-        (when (executable-find cmd)
-          (throw 'found cmd)))
-      ;; ToDo: Returns project local binary file
-      )))
+      (if (file-executable-p composer-executable-bin)
+          (list (expand-file-name composer-executable-bin))
+        (list (if (boundp 'php-executable) php-executable "php")
+              (expand-file-name composer-executable-bin)))
+    (cl-loop for cmd in '("composer" "composer.phar")
+             if (executable-find cmd)
+             return (list cmd))))
 
 (defun composer--find-composer-root (directory)
   "Return directory path which include composer.json by `DIRECTORY'."
@@ -111,11 +111,12 @@
   "Return command string by `SUB-COMMAND' and `ARGS'."
   (mapconcat
    (if composer--quote-shell-argument 'shell-quote-argument 'identity)
-   (cons (composer--find-executable)
-         (append (if composer-global-command '("global") nil)
-                 (list sub-command)
-                 (if composer--execute-interactive nil '("--no-interaction"))
-                 (composer--args-with-global-options args)))
+   (append
+    (composer--find-executable)
+    (append (if composer-global-command '("global") nil)
+            (list sub-command)
+            (if composer--execute-interactive nil '("--no-interaction"))
+            (composer--args-with-global-options args)))
    " "))
 
 (defun composer--args-with-global-options (args)
