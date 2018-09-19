@@ -353,6 +353,18 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 (make-obsolete 'composer-self-update 'composer "0.0.5")
 
 ;;;###autoload
+(defun composer-setup-managed-phar (&optional force)
+  "Setup `composer.phar'.  Force re-setup when `FORCE' option is non-NIL."
+  (interactive "p")
+  (when (called-interactively-p 'interactive)
+    (setq force (not (eq force 1))))
+  (when (and force (file-exists-p (composer--get-path-tomanaged-composer-phar)))
+    (delete-file (composer--get-path-tomanaged-composer-phar)))
+  (composer--ensure-exist-managed-composer-phar)
+  (let ((composer-use-managed-phar t))
+    (message "%s"(composer--command-execute "--version"))))
+
+;;;###autoload
 (defun composer (global &optional sub-command option)
   "Execute `composer.phar'.  Execute `global' sub command If GLOBAL is t.  Require SUB-COMMAND is composer sub command.  OPTION is optional commandline arguments."
   (interactive "p")
