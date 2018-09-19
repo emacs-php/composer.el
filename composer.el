@@ -229,10 +229,10 @@
   (let ((composer-executable-bin (composer--get-path-tomanaged-composer-phar)))
     (unless (and (file-exists-p composer-executable-bin)
                  (version<= composer-recent-version (composer--get-version)))
-      (composer--download-composer-phar composer-executable-bin))))
+      (composer--download-composer-phar composer-directory-to-managed-file))))
 
 (defun composer--download-composer-phar (path-to-dest)
-  "Download composer.phar and copy to `PATH-TO-DEST'.
+  "Download composer.phar and copy to `PATH-TO-DEST' directory.
 
 https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   (unless (featurep 'php-runtime)
@@ -246,9 +246,8 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
     (unless (string= expected-signature actual-signature)
       (php-runtime-expr (format "unlink('%s')" path-to-temp))
       (error "Invalid installer signature"))
-    (let ((default-directory (f-dirname path-to-temp)))
-      (shell-command (format "php %s" (shell-quote-argument path-to-temp))))
-    (f-move path-to-temp path-to-dest)))
+    (let ((default-directory path-to-dest))
+      (shell-command (format "php %s" (shell-quote-argument path-to-temp))))))
 
 
 ;;; API
