@@ -81,7 +81,7 @@
   :tag "Composer"
   :prefix "composer-")
 
-(defcustom composer-directory-to-managed-file user-emacs-directory
+(defcustom composer-directory-to-managed-file (f-join user-emacs-directory "var")
   "Path to directory of `composer.phar' file managed by Emacs package."
   :type 'directory
   :group 'composer)
@@ -221,7 +221,8 @@
 
 (defun composer--get-path-tomanaged-composer-phar ()
   "Return path to `composer.phar' file managed by Emacs package."
-  (locate-user-emacs-file "./composer.phar"))
+  (let ((user-emacs-directory composer-directory-to-managed-file))
+    (locate-user-emacs-file "./composer.phar")))
 
 (defun composer--ensure-exist-managed-composer-phar ()
   "Install latest version of `composer.phar' if that was not installed."
