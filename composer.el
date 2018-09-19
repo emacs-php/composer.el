@@ -241,7 +241,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   "Retrurn path to Composer bin directory."
   (if composer-global-command
       (or (getenv "COMPOSER_BIN_DIR")
-          (f-join (composer--get-global-bin-dir) "vendor/bin"))
+          (f-join (composer--get-global-dir) "vendor/bin"))
     (let ((path (composer--find-composer-root default-directory)))
       (if path
         (f-join path (composer-get-config "bin-dir"))))))
