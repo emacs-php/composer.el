@@ -43,6 +43,7 @@
 ;;; Code:
 (require 'php-runtime nil t)
 (require 'compile)
+(require 'json)
 (require 'seq)
 (require 's)
 (require 'f)
