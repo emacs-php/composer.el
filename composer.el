@@ -54,6 +54,9 @@
 (defvar composer-executable-bin nil
   "Path to `composer.phar' exec file.")
 
+(defvar composer-use-managed-phar nil
+  "Use composer.phar managed by Emacs package when `composer-use-managed-phar' is t.")
+
 (defvar composer--async-use-compilation t)
 
 (defvar composer--execute-interactive nil)
@@ -120,7 +123,10 @@
   (mapconcat
    (if composer--quote-shell-argument 'shell-quote-argument 'identity)
    (append
-    (composer--find-executable)
+    (let ((composer-executable-bin (if composer-use-managed-phar
+                               (composer--get-path-tomanaged-composer-phar)
+                             composer-executable-bin)))
+      (composer--find-executable))
     (append (if composer-global-command '("global") nil)
             (list sub-command)
             (if composer--execute-interactive nil '("--no-interaction"))

@@ -41,3 +41,10 @@ See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= sup
 (let ((composer-global-command t))
   (composer-get-bin-dir)) ;=> "/home/your-name/.composer/vendor/bin"
 #+END_SRC
+*** Special variable =composer-use-managed-phar=
+Use latest version of =composer.phar= managed by this package.  You can always use the latest version of it without having to set up Composer yourself.
+#+BEGIN_SRC emacs-lisp
+(let ((composer-use-managed-phar t)
+      (default-directory "/path/to/dir"))
+  (composer-install))
+#+END_SRC
