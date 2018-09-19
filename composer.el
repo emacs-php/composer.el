@@ -54,6 +54,9 @@
 (defvar composer-executable-bin nil
   "Path to `composer.phar' exec file.")
 
+(defvar composer-use-managed-phar nil
+  "Use composer.phar managed by Emacs package when `composer-use-managed-phar' is t.")
+
 (defvar composer--async-use-compilation t)
 
 (defvar composer--execute-interactive nil)
@@ -62,6 +65,9 @@
 
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
+
+(defvar composer-recent-version "1.7.2"
+  "Known latest version of `composer.phar'.")
 
 (defconst composer-installer-url "https://getcomposer.org/installer")
 
@@ -75,6 +81,11 @@
   :tag "Composer"
   :prefix "composer-")
 
+(defcustom composer-directory-to-managed-file user-emacs-directory
+  "Path to directory of `composer.phar' file managed by Emacs package."
+  :type 'directory
+  :group 'composer)
+
 (defcustom composer-use-ansi-color nil
   "Use ansi color code on execute `composer' command."
   :type 'boolean)
@@ -87,15 +98,15 @@
 
 ;;; Utility
 (defun composer--find-executable ()
-  "Return `composer' command name."
+  "Return list of `composer' command and executable file."
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
-      composer-executable-bin
-    (catch 'found
-      (dolist (cmd '("composer" "composer.phar"))
-        (when (executable-find cmd)
-          (throw 'found cmd)))
-      ;; ToDo: Returns project local binary file
-      )))
+      (if (file-executable-p composer-executable-bin)
+          (list (expand-file-name composer-executable-bin))
+        (list (if (boundp 'php-executable) php-executable "php")
+              (expand-file-name composer-executable-bin)))
+    (cl-loop for cmd in '("composer" "composer.phar")
+             if (executable-find cmd)
+             return (list cmd))))
 
 (defun composer--find-composer-root (directory)
   "Return directory path which include composer.json by `DIRECTORY'."
@@ -111,11 +122,15 @@
   "Return command string by `SUB-COMMAND' and `ARGS'."
   (mapconcat
    (if composer--quote-shell-argument 'shell-quote-argument 'identity)
-   (cons (composer--find-executable)
-         (append (if composer-global-command '("global") nil)
-                 (list sub-command)
-                 (if composer--execute-interactive nil '("--no-interaction"))
-                 (composer--args-with-global-options args)))
+   (append
+    (let ((composer-executable-bin (if composer-use-managed-phar
+                               (composer--get-path-tomanaged-composer-phar)
+                             composer-executable-bin)))
+      (composer--find-executable))
+    (append (if composer-global-command '("global") nil)
+            (list sub-command)
+            (if composer--execute-interactive nil '("--no-interaction"))
+            (composer--args-with-global-options args)))
    " "))
 
 (defun composer--args-with-global-options (args)
@@ -188,6 +203,10 @@
     (mapcar (lambda (line) (car (s-split-words line)))
             (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
+(defun composer--get-version ()
+  "Return version string of composer."
+  (car-safe (s-match "[0-9]+\\.[0-9]+\\.[0-9]+" (composer--command-execute "--version"))))
+
 (defun composer--get-global-dir ()
   "Return path to global composer directory."
   (seq-find
@@ -199,6 +218,17 @@
      (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
      (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
      (when (getenv "HOME") (f-join (getenv "HOME") ".composer"))))))
+
+(defun composer--get-path-tomanaged-composer-phar ()
+  "Return path to `composer.phar' file managed by Emacs package."
+  (locate-user-emacs-file "./composer.phar"))
+
+(defun composer--ensure-exist-managed-composer-phar ()
+  "Install latest version of `composer.phar' if that was not installed."
+  (let ((composer-executable-bin (composer--get-path-tomanaged-composer-phar)))
+    (unless (and (file-exists-p composer-executable-bin)
+                 (version<= composer-recent-version (composer--get-version)))
+      (composer--download-composer-phar composer-executable-bin))))
 
 (defun composer--download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST'.
