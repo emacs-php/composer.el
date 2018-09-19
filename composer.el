@@ -197,7 +197,7 @@
      (getenv "COMPOSER_HOME")
      (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
      (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
-     (when (getenv "HOME")) (f-join (getenv "HOME") ".composer")))))
+     (when (getenv "HOME") (f-join (getenv "HOME") ".composer"))))))
 
 (defun composer--download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST'.
