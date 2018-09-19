@@ -63,6 +63,9 @@
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
+(defvar composer-recent-version "1.7.2"
+  "Known latest version of `composer.phar'.")
+
 (defconst composer-installer-url "https://getcomposer.org/installer")
 
 
@@ -74,6 +77,11 @@
   :group (if (featurep 'php-mode) 'php nil)
   :tag "Composer"
   :prefix "composer-")
+
+(defcustom composer-directory-to-managed-file user-emacs-directory
+  "Path to directory of `composer.phar' file managed by Emacs package."
+  :type 'directory
+  :group 'composer)
 
 (defcustom composer-use-ansi-color nil
   "Use ansi color code on execute `composer' command."
@@ -189,6 +197,10 @@
     (mapcar (lambda (line) (car (s-split-words line)))
             (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
 
+(defun composer--get-version ()
+  "Return version string of composer."
+  (car-safe (s-match "[0-9]+\\.[0-9]+\\.[0-9]+" (composer--command-execute "--version"))))
+
 (defun composer--get-global-dir ()
   "Return path to global composer directory."
   (seq-find
@@ -200,6 +212,17 @@
      (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
      (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
      (when (getenv "HOME") (f-join (getenv "HOME") ".composer"))))))
+
+(defun composer--get-path-tomanaged-composer-phar ()
+  "Return path to `composer.phar' file managed by Emacs package."
+  (locate-user-emacs-file "./composer.phar"))
+
+(defun composer--ensure-exist-managed-composer-phar ()
+  "Install latest version of `composer.phar' if that was not installed."
+  (let ((composer-executable-bin (composer--get-path-tomanaged-composer-phar)))
+    (unless (and (file-exists-p composer-executable-bin)
+                 (version<= composer-recent-version (composer--get-version)))
+      (composer--download-composer-phar composer-executable-bin))))
 
 (defun composer--download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST'.
