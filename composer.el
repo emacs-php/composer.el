@@ -365,7 +365,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
     (delete-file (composer--get-path-to-managed-composer-phar)))
   (composer--ensure-exist-managed-composer-phar)
   (let ((composer-use-managed-phar t))
-    (message "%s"(composer--command-execute "--version"))))
+    (message "%s" (composer--command-execute "--version"))))
 
 ;;;###autoload
 (defun composer (global &optional sub-command option)
