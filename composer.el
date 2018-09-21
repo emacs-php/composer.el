@@ -124,7 +124,7 @@
    (if composer--quote-shell-argument 'shell-quote-argument 'identity)
    (append
     (let ((composer-executable-bin (if composer-use-managed-phar
-                               (composer--get-path-tomanaged-composer-phar)
+                               (composer--get-path-to-managed-composer-phar)
                              composer-executable-bin)))
       (composer--find-executable))
     (append (if composer-global-command '("global") nil)
@@ -219,14 +219,17 @@
      (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
      (when (getenv "HOME") (f-join (getenv "HOME") ".composer"))))))
 
-(defun composer--get-path-tomanaged-composer-phar ()
+(defun composer--get-path-to-managed-composer-phar ()
   "Return path to `composer.phar' file managed by Emacs package."
   (let ((user-emacs-directory composer-directory-to-managed-file))
     (locate-user-emacs-file "./composer.phar")))
 
+(define-obsolete-function-alias 'composer--get-path-tomanaged-composer-phar 'composer--get-path-tomanaged-composer-phar
+  "0.2.0")
+
 (defun composer--ensure-exist-managed-composer-phar ()
   "Install latest version of `composer.phar' if that was not installed."
-  (let ((composer-executable-bin (composer--get-path-tomanaged-composer-phar)))
+  (let ((composer-executable-bin (composer--get-path-to-managed-composer-phar)))
     (unless (and (file-exists-p composer-executable-bin)
                  (version<= composer-recent-version (composer--get-version)))
       (composer--download-composer-phar composer-directory-to-managed-file))))
@@ -358,8 +361,8 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq force (not (eq force 1))))
-  (when (and force (file-exists-p (composer--get-path-tomanaged-composer-phar)))
-    (delete-file (composer--get-path-tomanaged-composer-phar)))
+  (when (and force (file-exists-p (composer--get-path-to-managed-composer-phar)))
+    (delete-file (composer--get-path-to-managed-composer-phar)))
   (composer--ensure-exist-managed-composer-phar)
   (let ((composer-use-managed-phar t))
     (message "%s"(composer--command-execute "--version"))))
