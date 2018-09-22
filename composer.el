@@ -95,6 +95,14 @@
   "List of sub commands of interactive execution."
   :type '(repeat string))
 
+(defcustom composer-unsafe-skip-verify-installer-signature nil
+  "This setting is risky.
+
+Please enable this setting at your own risk in an environment old Emacs or PHP linked with old OpenSSL."
+  :type 'boolean
+  :risky t
+  :group 'composer)
+
 
 ;;; Utility
 (defun composer--find-executable ()
@@ -245,13 +253,13 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
          (s-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
         actual-signature)
     (php-runtime-eval (format "copy('%s', '%s');" composer-installer-url path-to-temp))
-    (setq actual-signature (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path-to-temp))))
-    (unless (string= expected-signature actual-signature)
-      (php-runtime-expr (format "unlink('%s')" path-to-temp))
-      (error "Invalid installer signature"))
+    (unless composer-unsafe-skip-verify-installer-signature
+      (setq actual-signature (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path-to-temp))))
+      (unless (string= expected-signature actual-signature)
+        (php-runtime-expr (format "unlink('%s')" path-to-temp))
+        (error "Invalid Composer installer signature")))
     (let ((default-directory path-to-dest))
       (shell-command (format "php %s" (shell-quote-argument path-to-temp))))))
-
 
 ;;; API
 
