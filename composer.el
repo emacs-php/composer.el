@@ -242,6 +242,17 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
                  (version<= composer-recent-version (composer--get-version)))
       (composer--download-composer-phar composer-directory-to-managed-file))))
 
+
+(defun composer--hash-file-sha384 (path)
+  "Return SHA-384 hash of the file `PATH'."
+  (cond
+   ((and (fboundp 'secure-hash-algorithms)
+         (memq 'sha384 (secure-hash-algorithms)))
+    (secure-hash 'sha384 (f-read-bytes path)))
+   ((string= "1" (php-runtime-expr "in_array('sha384', hash_algos())"))
+    (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path))))
+   (t (error "No method for SHA-384 hash.  Please install latest version of Emacs or PHP linked with OpenSSL"))))
+
 (defun composer--download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST' directory.
 
@@ -254,7 +265,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
         actual-signature)
     (php-runtime-eval (format "copy('%s', '%s');" composer-installer-url path-to-temp))
     (unless composer-unsafe-skip-verify-installer-signature
-      (setq actual-signature (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path-to-temp))))
+      (setq actual-signature (composer--hash-file-sha384 path-to-temp))
       (unless (string= expected-signature actual-signature)
         (php-runtime-expr (format "unlink('%s')" path-to-temp))
         (error "Invalid Composer installer signature")))
