@@ -224,7 +224,7 @@
   (let ((user-emacs-directory composer-directory-to-managed-file))
     (locate-user-emacs-file "./composer.phar")))
 
-(define-obsolete-function-alias 'composer--get-path-tomanaged-composer-phar 'composer--get-path-tomanaged-composer-phar
+(define-obsolete-function-alias 'composer--get-path-tomanaged-composer-phar 'composer--get-path-to-managed-composer-phar
   "0.2.0")
 
 (defun composer--ensure-exist-managed-composer-phar ()
