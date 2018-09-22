@@ -277,9 +277,8 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
       (or (getenv "COMPOSER_BIN_DIR")
           (f-join (composer--get-global-dir) "vendor/bin"))
     (let ((path (composer--find-composer-root default-directory)))
-      (if path
+      (when path
         (f-join path (composer-get-config "bin-dir"))))))
-
 
 ;;; Command
 
