@@ -71,6 +71,11 @@
 
 (defconst composer-installer-url "https://getcomposer.org/installer")
 
+(defconst composer-unsafe-phar-url
+  "https://getcomposer.org/download/1.7.2/composer.phar")
+
+(defconst composer-unsafe-phar-md5sum
+  "71a15787193c4bb77982e30057102d86")
 
 ;;; Customize
 (defgroup composer nil
@@ -94,6 +99,14 @@
   '("init" "remove" "search")
   "List of sub commands of interactive execution."
   :type '(repeat string))
+
+(defcustom composer-unsafe-skip-verify-installer-signature nil
+  "This setting is risky.
+
+Please enable this setting at your own risk in an environment old Emacs or PHP linked with old OpenSSL."
+  :type 'boolean
+  :risky t
+  :group 'composer)
 
 
 ;;; Utility
@@ -232,7 +245,32 @@
   (let ((composer-executable-bin (composer--get-path-to-managed-composer-phar)))
     (unless (and (file-exists-p composer-executable-bin)
                  (version<= composer-recent-version (composer--get-version)))
-      (composer--download-composer-phar composer-directory-to-managed-file))))
+      (if composer-unsafe-skip-verify-installer-signature
+          (composer--unsafe-fallback-download-composer-phar composer-directory-to-managed-file)
+        (composer--download-composer-phar composer-directory-to-managed-file)))))
+
+
+(defun composer--hash-file-sha384 (path)
+  "Return SHA-384 hash of the file `PATH'."
+  (cond
+   ((and (fboundp 'secure-hash-algorithms)
+         (memq 'sha384 (secure-hash-algorithms)))
+    (secure-hash 'sha384 (f-read-bytes path)))
+   ((string= "1" (php-runtime-expr "in_array('sha384', hash_algos())"))
+    (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path))))
+   (t (error "No method for SHA-384 hash.  Please install latest version of Emacs or PHP linked with OpenSSL"))))
+
+(defun composer--unsafe-fallback-download-composer-phar (path-to-dest)
+  "Download composer.phar and copy to `PATH-TO-DEST' directory."
+  (let ((dest-filename (expand-file-name "composer.phar" path-to-dest))
+        actual-signature)
+    (php-runtime-eval (format "copy('%s', '%s');" composer-unsafe-phar-url dest-filename))
+    (setq actual-signature
+          (php-runtime-expr (format "md5_file('%s')" dest-filename)))
+    (unless (string= composer-unsafe-phar-md5sum actual-signature)
+      (php-runtime-expr (format "unlink('%s')" dest-filename))
+      (error "Invalid composer.phar md5 signature"))
+    (php-runtime-expr (format "chmod('%s', 0755)" dest-filename))))
 
 (defun composer--download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST' directory.
@@ -245,13 +283,12 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
          (s-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
         actual-signature)
     (php-runtime-eval (format "copy('%s', '%s');" composer-installer-url path-to-temp))
-    (setq actual-signature (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path-to-temp))))
+    (setq actual-signature (composer--hash-file-sha384 path-to-temp))
     (unless (string= expected-signature actual-signature)
       (php-runtime-expr (format "unlink('%s')" path-to-temp))
-      (error "Invalid installer signature"))
+      (error "Invalid Composer installer signature"))
     (let ((default-directory path-to-dest))
       (shell-command (format "php %s" (shell-quote-argument path-to-temp))))))
-
 
 ;;; API
 
