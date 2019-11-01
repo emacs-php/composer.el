@@ -21,8 +21,8 @@ See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= sup
 | =C-u M-x composer-require=            | Run =composer require --dev= command                       |
 | =M-x composer-update=                 | Run =composer update= command                              |
 | =M-x composer-dump-autoload=          | Run =composer dump-autoload= command                       |
-| =M-x composer-run-script=             | Run =command= in =vendor/bin=                              |
-| =M-x composer-run-vendor-bin-command= | Run =composer run-script= command                          |
+| =M-x composer-run-script=             | Run =composer run-script= command                          |
+| =M-x composer-run-vendor-bin-command= | Run =command= in =vendor/bin=                              |
 | =M-x composer-find-json-file=         | Open =composer.json= of the project                        |
 | =M-x composer-view-lock-file=         | Open =composer.lock= of the project (as read-only)         |
 
