@@ -75,6 +75,9 @@
 
 (defconst composer-unsafe-phar-md5sum
   "66eea3af31cf357e2d8cac648abc21f3")
+
+(defconst composer-known-executable-names
+  '("composer" "composer.phar"))
 
 ;;; Customize
 (defgroup composer nil
@@ -121,7 +124,7 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
           (list (expand-file-name composer-executable-bin))
         (list (if (boundp 'php-executable) php-executable "php")
               (expand-file-name composer-executable-bin)))
-    (cl-loop for cmd in '("composer" "composer.phar")
+    (cl-loop for cmd in composer-known-executable-names
              if (executable-find cmd)
              return (list cmd))))
 
