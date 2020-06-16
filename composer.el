@@ -81,7 +81,7 @@
   "Interface to PHP Composer."
   :group 'external
   :group 'tools
-  :group (if (featurep 'php-mode) 'php nil)
+  :group 'php
   :tag "Composer"
   :prefix "composer-")
 
