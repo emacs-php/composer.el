@@ -1,10 +1,10 @@
 ;;; composer.el --- Interface to PHP Composer -*- lexical-binding: t -*-
 
-;; Copyright (C) 2018 Friends of Emacs-PHP development
+;; Copyright (C) 2020  Friends of Emacs-PHP development
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2015
-;; Version: 0.1.1
+;; Version: 0.2.0
 ;; Keywords: tools php dependency manager
 ;; Homepage: https://github.com/zonuexe/composer.el
 ;; Package-Requires: ((emacs "24.3") (s "1.9.0") (f "0.17") (seq "1.9") (php-runtime "0.1.0"))
