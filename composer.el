@@ -8,6 +8,7 @@
 ;; Keywords: tools php dependency manager
 ;; Homepage: https://github.com/zonuexe/composer.el
 ;; Package-Requires: ((emacs "24.3") (s "1.9.0") (f "0.17") (seq "1.9") (php-runtime "0.1.0"))
+;; License: GPL-3.0-or-later
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -22,7 +23,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
