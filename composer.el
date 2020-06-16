@@ -109,7 +109,12 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
 
 
 ;;; Utility
-(defun composer--find-executable ()
+(defun composer-find-executable ()
+  "Return list of `composer' command and executable file."
+  (or (composer--find-executable-1)
+      (user-error "Install Composer manually or run M-x composer-setup-managed-phar")))
+
+(defun composer--find-executable-1 ()
   "Return list of `composer' command and executable file."
   (if (and composer-executable-bin (file-exists-p composer-executable-bin))
       (if (file-executable-p composer-executable-bin)
@@ -138,7 +143,7 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
     (let ((composer-executable-bin (if composer-use-managed-phar
                                (composer--get-path-to-managed-composer-phar)
                              composer-executable-bin)))
-      (composer--find-executable))
+      (composer-find-executable))
     (append (if composer-global-command '("global") nil)
             (list sub-command)
             (if composer--execute-interactive nil '("--no-interaction"))
