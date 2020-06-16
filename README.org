@@ -1,8 +1,8 @@
 * composer.el
 
 #+BEGIN_HTML
-<a href="http://melpa.org/#/composer"><img alt="MELPA: composer" src="http://melpa.org/packages/composer-badge.svg"></a>
-<a href="http://stable.melpa.org/#/composer"><img alt="MELPA stable: composer" src="http://stable.melpa.org/packages/composer-badge.svg"></a>
+<a href="https://melpa.org/#/composer"><img alt="MELPA: composer" src="https://melpa.org/packages/composer-badge.svg"></a>
+<a href="https://stable.melpa.org/#/composer"><img alt="MELPA stable: composer" src="https://stable.melpa.org/packages/composer-badge.svg"></a>
 #+END_HTML
 
 [[https://getcomposer.org/][Composer]] interface for Emacs.
@@ -27,13 +27,13 @@ See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= sup
 | =M-x composer-view-lock-file=         | Open =composer.lock= of the project (as read-only)         |
 
 ** API
-*** =composer-get-config(name)=
+*** Function =composer-get-config(name)=
 
 #+BEGIN_SRC emacs-lisp
 (composer-get-config "bin-dir") ;=> "vendor/bin"
 #+END_SRC
 
-*** =composer-get-bin-dir()=
+*** Function =composer-get-bin-dir()=
 
 #+BEGIN_SRC emacs-lisp
 (composer-get-bin-dir) ;=> "/path/to/current-project/vendor/bin"
