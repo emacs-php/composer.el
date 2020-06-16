@@ -7,7 +7,7 @@
 ;; Version: 0.1.1
 ;; Keywords: tools php dependency manager
 ;; Homepage: https://github.com/zonuexe/composer.el
-;; Package-Requires: ((emacs "24") (cl-lib "0.5") (s "1.9.0") (f "0.17") (seq "1.9") (php-runtime "0.1.0"))
+;; Package-Requires: ((emacs "24.3") (s "1.9.0") (f "0.17") (seq "1.9") (php-runtime "0.1.0"))
 
 ;; This file is NOT part of GNU Emacs.
 
