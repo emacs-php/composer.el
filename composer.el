@@ -65,16 +65,16 @@
 (defvar composer-global-command nil
   "Execute composer global command when `composer-global-command' is t.")
 
-(defvar composer-recent-version "1.9.3"
+(defvar composer-recent-version "1.10.7"
   "Known latest version of `composer.phar'.")
 
 (defconst composer-installer-url "https://getcomposer.org/installer")
 
 (defconst composer-unsafe-phar-url
-  "https://getcomposer.org/download/1.9.3/composer.phar")
+  "https://getcomposer.org/download/1.10.7/composer.phar")
 
 (defconst composer-unsafe-phar-md5sum
-  "a9cabf0031eca63a220a2736435b6f25")
+  "66eea3af31cf357e2d8cac648abc21f3")
 
 ;;; Customize
 (defgroup composer nil
