@@ -206,15 +206,14 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
         (compile (composer--make-command-string sub-command args))
       (async-shell-command (composer--make-command-string sub-command args) nil nil))))
 
-(defun composer--ignore-warnings-in-output (output)
+(defun composer--remove-warnings (output)
   "Remove any 'Warning: ...' lines from composer output."
-  ;; not the greatest code, but it should work?
   (mapconcat 'identity
-             (seq-filter
+             (seq-remove
               (lambda (line)
-                (not (string-equal
-                      (substring (downcase line) 0 (length "warning: "))
-                      "warning: ")))
+                (string-equal
+                 (substring (downcase line) 0 (length "warning: "))
+                 "warning: "))
               (split-string output "\n"))
              "\n"))
 
@@ -317,7 +316,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 (defun composer-get-config (name)
   "Return config value by `NAME'."
   (let* ((default-directory (if composer-global-command (composer--get-global-dir) default-directory))
-         (output (s-lines (composer--remove-warnings-from-output
+         (output (s-lines (composer--remove-warnings
                            (composer--command-execute "config" name)))))
     (if (eq 1 (length output)) (car output) nil)))
 
