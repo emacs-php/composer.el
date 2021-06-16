@@ -1,5 +1,8 @@
 * composer.el
 
+Note: I maintain a `works-for-me` branch with all the fixes I've made.
+
+  
 #+BEGIN_HTML
 <a href="https://melpa.org/#/composer"><img alt="MELPA: composer" src="https://melpa.org/packages/composer-badge.svg"></a>
 <a href="https://stable.melpa.org/#/composer"><img alt="MELPA stable: composer" src="https://stable.melpa.org/packages/composer-badge.svg"></a>

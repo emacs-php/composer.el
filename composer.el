@@ -55,7 +55,8 @@
   "Path to `composer.phar' exec file.")
 
 (defvar composer-use-managed-phar nil
-  "Use composer.phar managed by Emacs package when `composer-use-managed-phar' is t.")
+  "Use composer.phar managed by Emacs package when
+`composer-use-managed-phar' is t.")
 
 (defvar composer--async-use-compilation t)
 
@@ -106,7 +107,8 @@
 (defcustom composer-unsafe-skip-verify-installer-signature nil
   "This setting is risky.
 
-Please enable this setting at your own risk in an environment old Emacs or PHP linked with old OpenSSL."
+Please enable this setting at your own risk in an environment old
+Emacs or PHP linked with old OpenSSL."
   :type 'boolean
   :risky t
   :group 'composer)
