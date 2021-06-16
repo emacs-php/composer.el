@@ -195,7 +195,7 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
   "Return script names in composer.json, excluding pre and post hooks."
   (let ((output (composer--command-execute "run" "-l")))
     (seq-filter (lambda (script) (not (member script '("pre" "post"))))
-                (mapcar (lambda (line) (car (s-split-words line)))
+                (mapcar (lambda (line) (car (s-split " " line t)))
                         (s-split "\n" (cadr (s-split "Scripts:\n" output)))))))
 
 (defun composer--command-async-execute (sub-command &rest args)
