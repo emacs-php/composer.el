@@ -284,9 +284,6 @@ When GLOBAL is non-NIL, execute sub command in global context."
   (let ((user-emacs-directory composer-directory-to-managed-file))
     (locate-user-emacs-file "./composer.phar")))
 
-(define-obsolete-function-alias 'composer--get-path-tomanaged-composer-phar 'composer--get-path-to-managed-composer-phar
-  "0.2.0")
-
 (defun composer--ensure-exist-managed-composer-phar ()
   "Install latest version of `composer.phar' if that was not installed."
   (let ((composer-executable-bin (composer--get-path-to-managed-composer-phar)))
