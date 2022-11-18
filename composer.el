@@ -98,7 +98,7 @@
   :tag "Composer"
   :prefix "composer-")
 
-(defcustom composer-directory-to-managed-file (f-join user-emacs-directory "var")
+(defcustom composer-directory-to-managed-file (expand-file-name "var" user-emacs-directory)
   "Path to directory of `composer.phar' file managed by Emacs package."
   :type 'directory
   :group 'composer)
@@ -165,8 +165,8 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
   args)
 
 (defun composer--parse-json (dir)
-  "Parse `composer.json' in `DIR'."
-  (json-read-file (f-join dir "composer.json")))
+  "Parse `composer.json' in DIR."
+  (json-read-file (expand-file-name "composer.json" dir)))
 
 (defun composer--parse-json-string (json)
   "Parse `composer.json' from JSON string."
@@ -190,22 +190,23 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
 
 (defun composer--get-vendor-bin-files ()
   "Return executable file names of `vendor/bin' dir."
-  (let* ((default-directory (or (composer--find-composer-root default-directory)
-                                default-directory))
-         (bin-dir (composer--get-vendor-bin-dir)))
-    (if (null bin-dir)
-        nil
-      (directory-files (f-join default-directory bin-dir) nil "\\`[^.]"))))
+  (let ((default-directory (or (composer--find-composer-root default-directory)
+                               default-directory))
+        path)
+    (when-let (bin-dir (composer--get-vendor-bin-dir))
+      (setq path (expand-file-name bin-dir default-directory))
+      (when (file-directory-p path)
+        (directory-files path nil "\\`[^.]")))))
 
 (defun composer--get-vendor-bin-path (command)
-  "Return executable file path by `COMMAND'."
+  "Return executable file path by COMMAND."
   (let* ((default-directory (or (composer--find-composer-root default-directory)
                                 default-directory))
          (bin-dir (composer--get-vendor-bin-dir))
-         (command-path (if (and bin-dir command) (f-join bin-dir command) nil)))
-    (if (not (and command-path (file-executable-p command-path)))
-        (error "%s command is not exists" command)
-      command-path)))
+         (command-path (if (and bin-dir command) (expand-file-name command bin-dir) nil)))
+    (if (and command-path (file-executable-p command-path))
+        command-path
+      (user-error "%s command is not exists" command))))
 
 (defun composer--get-scripts ()
   "Return script names in composer.json, excluding pre and post hooks."
@@ -322,7 +323,7 @@ When GLOBAL is non-NIL, execute sub command in global context."
 https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   (unless (featurep 'php-runtime)
     (error "This feature requires `php-runtime' package"))
-  (let ((path-to-temp (f-join temporary-file-directory "composer-setup.php"))
+  (let ((path-to-temp (expand-file-name "composer-setup.php" temporary-file-directory))
         (expected-signature
          (s-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
         actual-signature)
@@ -356,10 +357,10 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   "Retrurn path to Composer bin directory."
   (if composer-global-command
       (or (getenv "COMPOSER_BIN_DIR")
-          (f-join (composer--get-global-dir) "vendor/bin"))
+          (expand-file-name "vendor/bin" (composer--get-global-dir)))
     (let ((path (composer--find-composer-root default-directory)))
       (when path
-        (f-join path (composer-get-config "bin-dir"))))))
+        (expand-file-name (composer-get-config "bin-dir") path)))))
 
 ;;; Command
 
@@ -406,13 +407,13 @@ Require PACKAGE is package name."
 (defun composer-find-json-file ()
   "Open composer.json of the project."
   (interactive)
-  (find-file (f-join (composer--find-composer-root default-directory) "composer.json")))
+  (find-file (expand-file-name "composer.json" (composer--find-composer-root default-directory))))
 
 ;;;###autoload
 (defun composer-view-lock-file ()
   "Open composer.lock of the project."
   (interactive)
-  (find-file (f-join (composer--find-composer-root default-directory) "composer.lock"))
+  (find-file (expand-file-name "composer.lock" (composer--find-composer-root default-directory)))
   (view-mode))
 
 ;;;###autoload
