@@ -139,14 +139,9 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
              return (list cmd))))
 
 (defun composer--find-composer-root (directory)
-  "Return directory path which include composer.json by `DIRECTORY'."
-  (let ((composer-json (f-join directory "composer.json")) parent)
-    (if (file-exists-p composer-json)
-        (concat (f-dirname composer-json) "/")
-      (setq parent (f-dirname directory))
-      (if (null parent)
-          nil
-        (composer--find-composer-root (f-dirname directory))))))
+  "Return path which include `composer.json' by DIRECTORY."
+  (or (locate-dominating-file directory "composer.json")
+      (locate-dominating-file directory "composer.lock")))
 
 (defun composer--make-command-string (sub-command args)
   "Return command string by `SUB-COMMAND' and `ARGS'."
