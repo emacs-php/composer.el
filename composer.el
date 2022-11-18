@@ -378,8 +378,11 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 (defun composer-dump-autoload ()
   "Execute `composer.phar install' command."
   (interactive)
-  (let ((composer--async-use-compilation nil))
-    (composer--command-async-execute "dump-autoload")))
+  (prog1 t
+    (let ((output (composer--command-execute "dump-autoload")))
+      (when (called-interactively-p 'interactive)
+        (message "Composer: %s"
+                 (car-safe (last (split-string output "\n"))))))))
 
 ;;;###autoload
 (defun composer-require (is-dev &optional package)
