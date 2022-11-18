@@ -432,15 +432,6 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
   (composer--command-async-execute "run-script" script))
 
 ;;;###autoload
-(defun composer-self-update ()
-  "Execute `composer.phar self-update' command."
-  (interactive)
-  (when (yes-or-no-p "Do composer self-update? ")
-    (composer--command-async-execute "self-update")))
-
-(make-obsolete 'composer-self-update 'composer "0.0.5")
-
-;;;###autoload
 (defun composer-setup-managed-phar (&optional force)
   "Setup `composer.phar'.  Force re-setup when `FORCE' option is non-NIL."
   (interactive "p")
