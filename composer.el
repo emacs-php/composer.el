@@ -267,14 +267,17 @@ When GLOBAL is non-NIL, execute sub command in global context."
 (defun composer--get-global-dir ()
   "Return path to global composer directory."
   (seq-find
-   'file-exists-p
-   (seq-remove
-    'null
-    (list
-     (getenv "COMPOSER_HOME")
-     (when (eq system-type 'windows-nt) (f-join (getenv "APPDATA") "Composer"))
-     (when (getenv "XDG_CONFIG_HOME") (f-join (getenv "XDG_CONFIG_HOME") "composer"))
-     (when (getenv "HOME") (f-join (getenv "HOME") ".composer"))))))
+   #'file-exists-p
+   (delq
+    nil
+    (nconc
+     (list (getenv "COMPOSER_HOME")
+           (when (eval-when-compile (eq system-type 'windows-nt))
+             (expand-file-name "Composer" (getenv "APPDATA")))
+           (when-let (xdg-home (getenv "XDG_CONFIG_HOME")) (expand-file-name "composer") xdg-home))
+     (when-let (home (getenv "HOME"))
+       (list (expand-file-name ".config/composer" home)
+             (expand-file-name ".composer" home)))))))
 
 (defun composer--get-path-to-managed-composer-phar ()
   "Return path to `composer.phar' file managed by Emacs package."
