@@ -49,6 +49,15 @@
 (require 'seq)
 (require 's)
 (require 'f)
+(require 'consult nil t)
+
+(eval-when-compile
+  (declare-function
+   consult--read "ext:consult"
+   (candidates &rest options &key
+               prompt predicate require-match history default
+               keymap category initial narrow add-history annotate
+               state preview-key sort lookup group inherit-input-method)))
 
 ;;; Variables
 (defvar composer-executable-bin nil
@@ -164,6 +173,18 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
   "Parse `composer.json' in `DIR'."
   (json-read-file (f-join dir "composer.json")))
 
+(defun composer--parse-json-string (json)
+  "Parse `composer.json' from JSON string."
+  (with-temp-buffer
+    (insert json)
+    (goto-char (point-min))
+    (if (eval-when-compile (and (fboundp 'json-serialize)
+                                (fboundp 'json-parse-buffer)))
+        (with-no-warnings
+          (json-parse-buffer :object-type 'alist :array-type 'array))
+      (let ((json-object-type 'alist) (json-array-type 'vector))
+        (json-read-object)))))
+
 (defun composer--get-vendor-bin-dir ()
   "Return path to project bin dir."
   (let* ((dir (composer--find-composer-root default-directory))
@@ -220,10 +241,30 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
 
 (defun composer--list-sub-commands ()
   "List `composer' sub commands."
-  (let ((output (composer--command-execute "list")))
-    (mapcar (lambda (line) (car (s-split-words line)))
-            (s-split "\n" (cadr (s-split "Available commands:\n" output))))))
+  (let ((output (composer--command-execute "list" "--format=json")))
+    (delq nil
+          (seq-map (lambda (command)
+                     (let ((name (cdr-safe (assq 'name command))))
+                       (when (and name (not (string-prefix-p "_" name)))
+                         (list name :description (cdr-safe (assq 'description command))))))
+                   (cdr-safe (assq 'commands (composer--parse-json-string output)))))))
 
+(defun composer--completion-read-sub-command (global)
+  "Completing read composer sum command.
+
+When GLOBAL is non-NIL, execute sub command in global context."
+  (let* ((commands (composer--list-sub-commands))
+         (prompt (if global "Composer (global) sub command: " "Composer sub command: ")))
+    (if (fboundp 'consult--read)
+        (let* ((max (seq-max (seq-map (lambda (cand) (length (car cand))) commands)))
+               (align (propertize " " 'display `(space :align-to (+ left ,max 4))))
+               (annotator (lambda (cand)
+                            (when-let (description (plist-get (cdr-safe (assoc-string cand commands)) :description))
+                              (concat align description)))))
+          (consult--read commands
+                         :prompt prompt
+                         :annotate annotator))
+      (completing-read prompt commands))))
 (defun composer--get-version ()
   "Return version string of composer."
   (car-safe (s-match "[0-9]+\\.[0-9]+\\.[0-9]+" (composer--command-execute "--version"))))
@@ -413,16 +454,16 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 
 ;;;###autoload
 (defun composer (global &optional sub-command option)
-  "Execute `composer.phar'.  Execute `global' sub command If GLOBAL is t.  Require SUB-COMMAND is composer sub command.  OPTION is optional commandline arguments."
+  "Execute `composer' SUB-COMMAND with OPTION arguments.
+
+When called with prefix argument GLOBAL, execute in global context."
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq global (not (eq global 1)))
-    (setq sub-command (completing-read
-                       (if global "Composer (global) sub command: " "Composer sub command: ")
-                       (composer--list-sub-commands)))
+    (setq sub-command (composer--completion-read-sub-command global))
     (setq option (read-string (format "Input `composer %s' argument: " sub-command))))
   (unless sub-command
-    (error "A argument `SUB-COMMAND' is required"))
+    (error "An argument SUB-COMMAND is required"))
   (let ((composer--quote-shell-argument nil)
         (composer-global-command global)
         (composer--execute-interactive (member sub-command composer-interactive-sub-commands)))
