@@ -383,14 +383,17 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 
 ;;;###autoload
 (defun composer-require (is-dev &optional package)
-  "Execute `composer.phar require (--dev)' command.  Add --dev option if `IS-DEV' is t.  Require `PACKAGE' is package name."
+  "Execute `composer require' command.
+
+When IS-DEV is not-NIL, add `--dev' to option.
+Require PACKAGE is package name."
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq is-dev (not (eq is-dev 1)))
     (setq package (read-string
                    (if is-dev "Input package name(dev): " "Input package name: "))))
   (unless package
-    (error "A argument `PACKAGE' is required"))
+    (user-error "An argument PACKAGE is required"))
   (let ((args (list package)))
     (when is-dev (push "--dev" args))
     (apply 'composer--command-async-execute "require" args)))
