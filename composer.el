@@ -232,8 +232,7 @@ Please enable this setting at your own risk in an environment old Emacs or PHP l
         (compile (composer--make-command-string sub-command args) t)
       (replace-regexp-in-string
        "^.+getcomposer.org/xdebug\n" ""
-       (s-chomp
-        (shell-command-to-string (composer--make-command-string sub-command args)))))))
+       (string-trim-right (shell-command-to-string (composer--make-command-string sub-command args)))))))
 
 (defun composer--list-sub-commands ()
   "List `composer' sub commands."
@@ -261,9 +260,13 @@ When GLOBAL is non-NIL, execute sub command in global context."
                          :prompt prompt
                          :annotate annotator))
       (completing-read prompt commands))))
+
 (defun composer--get-version ()
   "Return version string of composer."
-  (car-safe (s-match "[0-9]+\\.[0-9]+\\.[0-9]+" (composer--command-execute "--version"))))
+  (save-match-data
+    (let ((v (composer--command-execute "--version")))
+      (when (string-match "[0-9]+\\.[0-9]+\\.[0-9]+" v)
+        (match-string 0 v)))))
 
 (defun composer--get-global-dir ()
   "Return path to global composer directory."
@@ -302,8 +305,8 @@ When GLOBAL is non-NIL, execute sub command in global context."
          (memq 'sha384 (secure-hash-algorithms)))
     (secure-hash 'sha384 (f-read-bytes path)))
    ((string= "1" (php-runtime-expr "in_array('sha384', hash_algos())"))
-    (s-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path))))
-   (t (error "No method for SHA-384 hash.  Please install latest version of Emacs or PHP linked with OpenSSL"))))
+    (string-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path))))
+   (error "No method for SHA-384 hash.  Please install latest version of Emacs or PHP linked with OpenSSL")))
 
 (defun composer--unsafe-fallback-download-composer-phar (path-to-dest)
   "Download composer.phar and copy to `PATH-TO-DEST' directory."
@@ -325,7 +328,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
     (error "This feature requires `php-runtime' package"))
   (let ((path-to-temp (expand-file-name "composer-setup.php" temporary-file-directory))
         (expected-signature
-         (s-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
+         (string-trim (php-runtime-eval "readfile('https://composer.github.io/installer.sig');")))
         actual-signature)
     (php-runtime-eval (format "copy('%s', '%s');" composer-installer-url path-to-temp))
     (setq actual-signature (composer--hash-file-sha384 path-to-temp))
@@ -341,7 +344,7 @@ https://getcomposer.org/doc/faqs/how-to-install-composer-programmatically.md"
 (defun composer-get-config (name)
   "Return config value by `NAME'."
   (let* ((default-directory (if composer-global-command (composer--get-global-dir) default-directory))
-         (output (s-lines (composer--command-execute "config" name))))
+         (output (split-string (composer--command-execute "config" name) "\n")))
     (if (eq 1 (length output)) (car output) nil)))
 
 ;; (composer--command-async-execute "require" "--dev" "phpunit/phpunit:^4.8")
