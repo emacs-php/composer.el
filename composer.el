@@ -281,11 +281,13 @@ When GLOBAL is non-NIL, execute sub command in global context."
       (composer--download-composer-phar composer-directory-to-managed-file))))
 
 (defun composer--hash-file-sha384 (path)
-  "Return SHA-384 hash of the file `PATH'."
+  "Return SHA-384 hash of the file PATH."
   (cond
-   ((and (fboundp 'secure-hash-algorithms)
-         (memq 'sha384 (secure-hash-algorithms)))
-    (secure-hash 'sha384 (f-read-bytes path)))
+   ((eval-when-compile (and (fboundp 'secure-hash-algorithms)
+                            (memq 'sha384 (secure-hash-algorithms))))
+    (secure-hash 'sha384 (with-temp-buffer
+                           (insert-file-contents-literally path)
+                           (buffer-substring-no-properties (point-min) (point-max)))))
    ((string= "1" (php-runtime-expr "in_array('sha384', hash_algos())"))
     (string-trim (php-runtime-expr (format "hash_file('SHA384', '%s')" path))))
    (error "No method for SHA-384 hash.  Please install latest version of Emacs or PHP linked with OpenSSL")))
