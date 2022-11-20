@@ -75,9 +75,6 @@
 (defvar composer-global-command nil
   "When not-NIL, execute composer global command.")
 
-(defvar composer-recent-version "1.10.7"
-  "Known latest version of `composer.phar'.")
-
 (defconst composer-installer-url "https://getcomposer.org/installer")
 
 (defconst composer-known-executable-names
@@ -276,8 +273,7 @@ When GLOBAL is non-NIL, execute sub command in global context."
 (defun composer--ensure-exist-managed-composer-phar ()
   "Install latest version of `composer.phar' if that was not installed."
   (let ((composer-executable-bin (composer--get-path-to-managed-composer-phar)))
-    (unless (and (file-exists-p composer-executable-bin)
-                 (version<= composer-recent-version (composer--get-version)))
+    (unless (file-exists-p composer-executable-bin)
       (composer--download-composer-phar composer-directory-to-managed-file))))
 
 (defun composer--hash-file-sha384 (path)
