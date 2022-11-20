@@ -64,7 +64,7 @@
   "Path to `composer.phar' exec file.")
 
 (defvar composer-use-managed-phar nil
-  "Use composer.phar managed by Emacs package when `composer-use-managed-phar' is t.")
+  "When not-NIL, use `composer.phar' managed by Emacs package.")
 
 (defvar composer--async-use-compilation t)
 
@@ -73,7 +73,7 @@
 (defvar composer--quote-shell-argument t)
 
 (defvar composer-global-command nil
-  "Execute composer global command when `composer-global-command' is t.")
+  "When not-NIL, execute composer global command.")
 
 (defvar composer-recent-version "1.10.7"
   "Known latest version of `composer.phar'.")
