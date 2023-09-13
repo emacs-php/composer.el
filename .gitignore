@@ -1,5 +1,7 @@
 *-autoloads.el
 *.elc
 .cask
+.eask
+/dist
 composer.lock
 vendor/*
