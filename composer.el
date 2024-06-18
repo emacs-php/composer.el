@@ -1,6 +1,6 @@
 ;;; composer.el --- Interface to PHP Composer -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020  Friends of Emacs-PHP development
+;; Copyright (C) 2024  Friends of Emacs-PHP development
 
 ;; Author: USAMI Kenta <tadsan@zonu.me>
 ;; Created: 5 Dec 2015
@@ -387,7 +387,7 @@ Require PACKAGE is package name."
 
 ;;;###autoload
 (defun composer-run-vendor-bin-command (command)
-  "Run command `COMMAND' in `vendor/bin' of the composer project."
+  "Run command COMMAND in `vendor/bin' of the composer project."
   (interactive (list (completing-read "Run command in vendor/bin: " (composer--get-vendor-bin-files))))
   (let ((default-directory (or (composer--find-composer-root default-directory)
                                default-directory))
@@ -404,7 +404,7 @@ Require PACKAGE is package name."
 
 ;;;###autoload
 (defun composer-setup-managed-phar (&optional force)
-  "Setup `composer.phar'.  Force re-setup when `FORCE' option is non-NIL."
+  "Setup `composer.phar'.  Force re-setup when FORCE option is non-NIL."
   (interactive "p")
   (when (called-interactively-p 'interactive)
     (setq force (not (eq force 1))))
