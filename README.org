@@ -25,6 +25,7 @@ See [[https://getcomposer.org/doc/][Composer Documentation]].  =composer.el= sup
 | =M-x composer-run-vendor-bin-command= | Run =command= in =vendor/bin=                              |
 | =M-x composer-find-json-file=         | Open =composer.json= of the project                        |
 | =M-x composer-view-lock-file=         | Open =composer.lock= of the project (as read-only)         |
+| =M-x composer-list-packages=          | Open the list of packages for the project                  |
 
 ** API
 *** Function =composer-get-config(name)=
