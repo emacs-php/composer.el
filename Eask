@@ -1,3 +1,5 @@
+;; -*- mode: eask; lexical-binding: t -*-
+
 (package "composer"
          "0.2.0"
          "Interface to PHP Composer")
